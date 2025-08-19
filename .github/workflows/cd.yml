@@ -1,0 +1,17 @@
+name: CD
+
+on:
+  push:
+    branches:
+     - main
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
+jobs:
+  promote:
+    uses: Energinet-DataHub/.github/.github/workflows/promote-prerelease.yml@lanni/actions_refactor
+    with:
+      release_name_prefix: "whatisthis"
