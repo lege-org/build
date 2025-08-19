@@ -33,7 +33,7 @@ jobs:
 
       - name: Publish
         run: |
-          dotnet publish source/ConsoleApp.csproj --configuration Release --output ${{ env.RELEASE_FOLDER_PATH }}/ConsoleApp --no-restore
+          dotnet publish source/ConsoleApp/ConsoleApp.csproj --configuration Release --output ${{ env.RELEASE_FOLDER_PATH }}/ConsoleApp --no-restore
 
 
       - name: Get releaseversion strings
