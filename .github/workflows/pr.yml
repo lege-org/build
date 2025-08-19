@@ -4,6 +4,15 @@ on:
   pull_request:
     branches:
       - main
+
+permissions:
+  contents: write
+  id-token: write
+  pull-requests: write
+
+env:
+  RELEASE_FOLDER_PATH: ${{ github.workspace }}/publish
+  
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -15,3 +24,39 @@ jobs:
         uses: Energinet-DataHub/.github/actions/setup-dotnet@lanni/actions_refactor
         with:
           global_json_directory: ${{ github.workspace }}
+
+      - name: Build
+        uses: Energinet-DataHub/.github/actions/dotnet-build-cached@lanni/actions_refactor
+        with:
+          solution_directory: ${{ github.workspace }}
+          solution_filename: build.sln
+          pull_request_number: ${{ github.event.pull_request.number }} # needs to support merge_queue
+          sha: ${{ github.sha }} # needs to support merge_queue
+
+      - name: Publish
+        run: |
+          dotnet publish source/ConsoleApp/ConsoleApp.csproj --configuration Release --output ${{ env.RELEASE_FOLDER_PATH }}/ConsoleApp --no-restore
+
+
+      - name: Get releaseversion strings
+        id: get_releaseversion_strings
+        uses: Energinet-Datahub/.github/.github/actions/github-get-releaseversion-strings@lanni/actions_refactor
+        with:
+          release_name_prefix: "whatisthis"
+
+      - name: Zip files for prerelease
+        uses: thedoctor0/zip-release@0.6.2
+        with:
+          type: zip
+          filename: ${{ steps.get_releaseversion_strings.outputs.release_zip_filename }}
+          directory: ${{ env.RELEASE_FOLDER_PATH }}
+
+      - name: Create pre-release
+        uses: Energinet-Datahub/.github/.github/actions/github-create-release@lanni/actions_refactor
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          automatic_release_tag: ${{ steps.get_releaseversion_strings.outputs.release_version }}
+          prerelease: true
+          title: ${{ steps.get_releaseversion_strings.outputs.release_version }}
+          files: |
+            ${{ env.RELEASE_FOLDER_PATH }}/${{ steps.get_releaseversion_strings.outputs.release_zip_filename }}
