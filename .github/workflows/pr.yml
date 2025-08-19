@@ -15,3 +15,11 @@ jobs:
         uses: Energinet-DataHub/.github/actions/setup-dotnet@lanni/actions_refactor
         with:
           global_json_directory: ${{ github.workspace }}
+
+      - name: Build
+        uses: Energinet-DataHub/.github/actions/dotnet-build-cached@lanni/actions_refactor
+        with:
+          solution_directory: ${{ github.workspace }}
+          solution_filename: YourSolution.sln
+          pull_request_number: ${{ github.event.pull_request.number }}
+          sha: ${{ github.sha }}
