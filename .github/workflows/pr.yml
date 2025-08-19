@@ -1,0 +1,17 @@
+name: PR Push Workflow
+
+on:
+  pull_request:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .net
+        uses: Energinet-DataHub/.github/actions/setup-dotnet@lanni/actions_refactor
+        with:
+          global_json_directory: ${{ github.workspace }}
