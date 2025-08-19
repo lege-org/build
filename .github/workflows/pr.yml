@@ -20,6 +20,6 @@ jobs:
         uses: Energinet-DataHub/.github/actions/dotnet-build-cached@lanni/actions_refactor
         with:
           solution_directory: ${{ github.workspace }}
-          solution_filename: YourSolution.sln
-          pull_request_number: ${{ github.event.pull_request.number }}
-          sha: ${{ github.sha }}
+          solution_filename: build.sln
+          pull_request_number: ${{ github.event.pull_request.number }} # needs to support merge_queue
+          sha: ${{ github.sha }} # needs to support merge_queue
