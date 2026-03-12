@@ -15,7 +15,7 @@ jobs:
         run : ls -la /imagegeneration
 
       - name: Show runner README
-        run: cat /imagegeneration/Ubuntu2404-Readme.md
+        run: cat /imagegeneration/software-report.json
         
       - name: Fake commandIndex
         run: |
