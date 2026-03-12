@@ -14,6 +14,7 @@ jobs:
       - name: Fake commandIndex
         run: |
           docker create --name temp-container mcr.microsoft.com/azure-cli:latest
+          mkdir ~/.azure
           docker cp temp-container:/root/.azure/commandIndex.json ~/.azure/commandIndex.json
 
       - name: Run az version
