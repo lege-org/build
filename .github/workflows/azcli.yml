@@ -15,7 +15,7 @@ jobs:
         run: mkdir ~/.azure
     
       - name: Fake it till you make it
-        run: docker run mcr.microsoft.com/azure-cli:latest -v ~/.azure:/root/.azure az version
+        run: docker run -v ~/.azure:/root/.azure mcr.microsoft.com/azure-cli:latest az version
 
       - name: Run az version
         run: az version
