@@ -11,11 +11,10 @@ jobs:
         job-index: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
     name: Az Cli ${{ matrix.job-index }}
     steps:
-      - name: Create
-        run: mkdir ~/.azure
-    
-      - name: Fake it till you make it
-        run: docker run -v ~/.azure:/root/.azure mcr.microsoft.com/azure-cli:latest az version
+      - name: Fake commandIndex
+        run: |
+          docker create --name temp-container mcr.microsoft.com/azure-cli:latest
+          docker cp temp-container:/root/.azure/commandIndex.json ~/.azure/commandIndex.json
 
       - name: Run az version
         run: az version
