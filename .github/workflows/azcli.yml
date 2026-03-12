@@ -12,6 +12,7 @@ jobs:
     name: Az Cli ${{ matrix.job-index }}
     steps:
       - name: Run az version 1st
-        run: az version
+        run: docker pull mcr.microsoft.com/azure-cli:latest
       - name: Run az version 2nd
-        run: az version
+        run: docker run mcr.microsoft.com/azure-cli:latest az version
+        
