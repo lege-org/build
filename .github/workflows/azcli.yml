@@ -12,7 +12,7 @@ jobs:
     name: Az Cli ${{ matrix.job-index }}
     steps:
       - name: Fake it till you make it
-        run: docker run -m mcr.microsoft.com/azure-cli:latest -v ~/.azure:/root/.azure az version
+        run: docker run mcr.microsoft.com/azure-cli:latest -v ~/.azure:/root/.azure az version
 
       - name: Run az version
         run: az version
