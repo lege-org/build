@@ -1,0 +1,35 @@
+name: Az cli slowzyness - actions cache
+
+on:
+  workflow_dispatch:
+
+jobs:
+  az:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        job-index: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+    name: Az Cli ${{ matrix.job-index }}
+    steps:
+      - name: Fake commandIndex
+        id: versionlookup
+        run: |
+          VERSION=$(cat /imagegeneration/software-report.json | jq -r '.. | objects | select(.NodeType == "ToolVersionNode" and .ToolName == "Azure CLI") | .Version')
+        echo "version=$VERSION" >>$GITHUB_OUTPUT
+
+      - name: Restore asdf cache
+        uses: actions/cache/restore@v4
+        id: restore-cache-commandindex
+        with:
+          path: ~/.azure/commandIndex.json
+          key: ${{ runner.os }}-azcli-cidx-${{ steps.versionlookup.outputs.version }}
+
+      - name: Run az version
+        run: az version
+
+      - name: Save asdf cache
+        uses: actions/cache/save@v4
+        if: ${{ steps.restore-cache-commandindex.outputs.cache-hit != 'true' }}
+        with:
+          path: ~/.azure/commandIndex.json
+          key: ${{ runner.os }}-azcli-cidx-${{ steps.versionlookup.outputs.version }}
