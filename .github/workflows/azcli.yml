@@ -13,7 +13,7 @@ jobs:
     steps:      
       - name: Fake commandIndex
         run: |
-          VERSION=$(cat /imagegeneration/software-report.json | jq -r '.. | select(.NodeType == "ToolVersionNode" and .ToolName == "Azure CLI") | .Version')
+          VERSION=$(cat /imagegeneration/software-report.json | jq -r '.. | objects | select(.NodeType == "ToolVersionNode" and .ToolName == "Azure CLI") | .Version')
         
           docker create --name temp-container mcr.microsoft.com/azure-cli:$VERSION
           mkdir ~/.azure
