@@ -15,7 +15,7 @@ jobs:
         id: versionlookup
         run: |
           VERSION=$(cat /imagegeneration/software-report.json | jq -r '.. | objects | select(.NodeType == "ToolVersionNode" and .ToolName == "Azure CLI") | .Version')
-        echo "version=$VERSION" >>$GITHUB_OUTPUT
+          echo "version=$VERSION" >>$GITHUB_OUTPUT
 
       - name: Restore asdf cache
         uses: actions/cache/restore@v4
