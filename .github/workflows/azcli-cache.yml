@@ -11,25 +11,32 @@ jobs:
         job-index: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
     name: Az Cli ${{ matrix.job-index }}
     steps:
-      - name: Fake commandIndex
-        id: versionlookup
+      - name: Check requirements
+        id: requirements
         run: |
+          if [ ! -f ~/.azure/commandIndex.json ]; then
+            echo "exists=false" >> $GITHUB_OUTPUT
+          else
+            echo "exists=true" >> $GITHUB_OUTPUT
+          fi
+          
           VERSION=$(cat /imagegeneration/software-report.json | jq -r '.. | objects | select(.NodeType == "ToolVersionNode" and .ToolName == "Azure CLI") | .Version')
-          echo "version=$VERSION" >>$GITHUB_OUTPUT
-
-      - name: Restore asdf cache
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          
+      - name: Restore commandIndex for ${{ steps.requirements.outputs.version }}
         uses: actions/cache/restore@v4
-        id: restore-cache-commandindex
+        if: ${{ steps.requirements.outputs.exists != 'true' }}
+        id: restore-commandindex
         with:
           path: ~/.azure/commandIndex.json
-          key: ${{ runner.os }}-azcli-cidx-${{ steps.versionlookup.outputs.version }}
+          key: ${{ runner.os }}-azcli-cidx-${{ steps.requirements.outputs.version }}
 
       - name: Run az version
         run: az version
 
       - name: Save asdf cache
         uses: actions/cache/save@v4
-        if: ${{ steps.restore-cache-commandindex.outputs.cache-hit != 'true' }}
+        if: ${{ steps.restore-commandindex.outputs.cache-hit != 'true' && steps.requirements.outputs.exists != 'true' }}
         with:
           path: ~/.azure/commandIndex.json
-          key: ${{ runner.os }}-azcli-cidx-${{ steps.versionlookup.outputs.version }}
+          key: ${{ runner.os }}-azcli-cidx-${{ steps.requirements.outputs.version }}
